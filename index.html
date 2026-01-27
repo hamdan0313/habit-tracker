@@ -35,60 +35,68 @@
             margin-bottom: 10px;
         }
         
-        header p {
+        .date-display {
+            font-size: 1.2rem;
             opacity: 0.9;
         }
         
-        .dashboard {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-card .streak {
+            color: #f59e0b;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         .card {
             background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
         .card h2 {
             color: #333;
             margin-bottom: 20px;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .card h2 span {
-            font-size: 1.5rem;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-box {
-            text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            color: white;
-        }
-        
-        .stat-box .number {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        
-        .stat-box .label {
-            font-size: 0.8rem;
-            opacity: 0.9;
-            margin-top: 5px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
         .habit-form {
@@ -99,9 +107,9 @@
         
         .habit-form input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
@@ -112,12 +120,17 @@
         }
         
         .btn {
-            padding: 12px 24px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         .btn-primary {
@@ -125,187 +138,218 @@
             color: white;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
         }
         
         .habits-list {
-            max-height: 300px;
-            overflow-y: auto;
+            list-style: none;
         }
         
         .habit-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
             margin-bottom: 10px;
-            transition: transform 0.2s;
+            transition: background 0.3s;
         }
         
         .habit-item:hover {
-            transform: translateX(5px);
+            background: #f0f0f0;
         }
         
-        .habit-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .habit-item.completed {
+            background: #d1fae5;
         }
         
         .habit-checkbox {
             width: 24px;
             height: 24px;
-            border-radius: 50%;
-            border: 2px solid #667eea;
+            margin-right: 15px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .habit-checkbox.checked {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: #667eea;
-        }
-        
-        .habit-checkbox.checked::after {
-            content: '\2713';
-            color: white;
-            font-weight: bold;
+            accent-color: #667eea;
         }
         
         .habit-name {
-            font-weight: 500;
+            flex: 1;
+            font-size: 1.1rem;
             color: #333;
         }
         
         .habit-streak {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #ff6b6b;
-            font-weight: bold;
-        }
-        
-        .habit-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-delete {
-            background: #ff6b6b;
-            color: white;
-            padding: 6px 12px;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 0.85rem;
+            margin-right: 10px;
         }
         
         .chart-container {
-            height: 250px;
+            position: relative;
+            height: 300px;
+        }
+        
+        .history-section {
             margin-top: 20px;
         }
         
-        .history-list {
-            max-height: 350px;
-            overflow-y: auto;
-        }
-        
-        .history-item {
-            padding: 12px 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .history-date {
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .history-count {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-        
-        .empty-state span {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 10px;
-        }
-        
-        .calendar-grid {
+        .history-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
+            gap: 5px;
             margin-top: 15px;
         }
         
-        .calendar-day {
+        .history-day {
             aspect-ratio: 1;
-            border-radius: 4px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.7rem;
-            color: #666;
-        }
-        
-        .calendar-day.completed {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
         
-        .calendar-day.partial {
-            background: #c4b5fd;
-            color: white;
+        .history-day:hover {
+            transform: scale(1.1);
         }
         
-        .calendar-day.empty {
-            background: #f0f0f0;
-        }
+        .history-day.level-0 { background: #e5e7eb; color: #666; }
+        .history-day.level-1 { background: #c7d2fe; }
+        .history-day.level-2 { background: #a5b4fc; }
+        .history-day.level-3 { background: #818cf8; }
+        .history-day.level-4 { background: #667eea; }
         
         .day-labels {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
+            gap: 5px;
             margin-bottom: 5px;
-        }
-        
-        .day-label {
             text-align: center;
-            font-size: 0.7rem;
-            color: #888;
-            font-weight: 500;
+            font-size: 0.75rem;
+            color: #666;
         }
         
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .stat-box .number {
-                font-size: 1.5rem;
-            }
+        .history-legend {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        
+        .legend-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .history-detail {
+            margin-top: 15px;
+        }
+        
+        .history-detail-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .history-detail-item .status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .history-detail-item .status.done {
+            background: #10b981;
+        }
+        
+        .history-detail-item .status.missed {
+            background: #ef4444;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
@@ -313,473 +357,473 @@
     <div class="container">
         <header>
             <h1>Habit Tracker</h1>
-            <p>Build better habits, one day at a time</p>
+            <div class="date-display" id="currentDate"></div>
         </header>
         
-        <div class="dashboard">
-            <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Today's Progress</h3>
+                <div class="value" id="todayProgress">0%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Current Streak</h3>
+                <div class="value streak" id="currentStreak">0 days</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Habits</h3>
+                <div class="value" id="totalHabits">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Best Streak</h3>
+                <div class="value streak" id="bestStreak">0 days</div>
+            </div>
+        </div>
+        
+        <div class="main-grid">
             <div class="card">
-                <h2><span>ð</span> Overview</h2>
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="number" id="totalHabits">0</div>
-                        <div class="label">Total Habits</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="number" id="completedToday">0</div>
-                        <div class="label">Done Today</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="number" id="longestStreak">0</div>
-                        <div class="label">Best Streak</div>
-                    </div>
+                <h2>Daily Check-In</h2>
+                <div class="habit-form">
+                    <input type="text" id="habitInput" placeholder="Add a new habit..." maxlength="50">
+                    <button class="btn btn-primary" onclick="addHabit()">Add</button>
                 </div>
+                <ul class="habits-list" id="habitsList"></ul>
+            </div>
+            
+            <div class="card">
+                <h2>Weekly Progress</h2>
                 <div class="chart-container">
                     <canvas id="weeklyChart"></canvas>
                 </div>
             </div>
-            
-            <!-- Daily Check-in -->
-            <div class="card">
-                <h2><span>â</span> Daily Check-in</h2>
-                <form class="habit-form" id="habitForm">
-                    <input type="text" id="habitInput" placeholder="Add a new habit..." required>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </form>
-                <div class="habits-list" id="habitsList">
-                    <div class="empty-state">
-                        <span>ð±</span>
-                        <p>No habits yet. Add your first habit above!</p>
-                    </div>
-                </div>
+        </div>
+        
+        <div class="card">
+            <h2>History View</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('heatmap')">Heatmap</button>
+                <button class="tab" onclick="switchTab('chart')">Monthly Chart</button>
             </div>
             
-            <!-- Streak Tracking -->
-            <div class="card">
-                <h2><span>ð¥</span> Streak Tracking</h2>
-                <div id="streaksList">
-                    <div class="empty-state">
-                        <span>â­</span>
-                        <p>Complete habits to build streaks!</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Weekly Progress Chart -->
-            <div class="card">
-                <h2><span>ð</span> Completion Rate</h2>
-                <div class="chart-container">
-                    <canvas id="completionChart"></canvas>
-                </div>
-            </div>
-            
-            <!-- Calendar View -->
-            <div class="card">
-                <h2><span>ð</span> This Month</h2>
+            <div id="heatmapTab" class="tab-content active">
+                <p style="color: #666; margin-bottom: 10px;">Last 12 weeks of activity (click a day for details)</p>
                 <div class="day-labels">
-                    <div class="day-label">Sun</div>
-                    <div class="day-label">Mon</div>
-                    <div class="day-label">Tue</div>
-                    <div class="day-label">Wed</div>
-                    <div class="day-label">Thu</div>
-                    <div class="day-label">Fri</div>
-                    <div class="day-label">Sat</div>
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
                 </div>
-                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="history-grid" id="historyGrid"></div>
+                <div class="history-legend">
+                    <span>Less</span>
+                    <div class="legend-box level-0"></div>
+                    <div class="legend-box level-1"></div>
+                    <div class="legend-box level-2"></div>
+                    <div class="legend-box level-3"></div>
+                    <div class="legend-box level-4"></div>
+                    <span>More</span>
+                </div>
             </div>
             
-            <!-- History -->
-            <div class="card">
-                <h2><span>ð</span> History</h2>
-                <div class="history-list" id="historyList">
-                    <div class="empty-state">
-                        <span>ð</span>
-                        <p>Your habit history will appear here.</p>
-                    </div>
+            <div id="chartTab" class="tab-content">
+                <div class="chart-container">
+                    <canvas id="monthlyChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
     
+    <div class="modal" id="dayModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalDate">Date</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="history-detail" id="modalContent"></div>
+        </div>
+    </div>
+    
     <script>
-        // Data management with localStorage
-        const STORAGE_KEY = 'habitTrackerData';
+        // Initialize data from localStorage
+        let habits = JSON.parse(localStorage.getItem('habits')) || [];
+        let history = JSON.parse(localStorage.getItem('habitHistory')) || {};
+        let weeklyChart, monthlyChart;
         
-        function getData() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : { habits: [], history: {} };
+        // Format date functions
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
         }
         
-        function saveData(data) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        function formatDisplayDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
         }
         
-        function getTodayKey() {
-            return new Date().toISOString().split('T')[0];
+        function getToday() {
+            return formatDate(new Date());
         }
         
-        function getWeekDates() {
-            const dates = [];
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                dates.push(date.toISOString().split('T')[0]);
-            }
-            return dates;
-        }
-        
-        // Initialize or update today's check-ins
-        function initToday() {
-            const data = getData();
-            const today = getTodayKey();
+        // Initialize the app
+        function init() {
+            document.getElementById('currentDate').textContent = formatDisplayDate(new Date());
+            document.getElementById('habitInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addHabit();
+            });
             
-            if (!data.history[today]) {
-                data.history[today] = {
-                    completed: [],
-                    total: data.habits.length
-                };
-                saveData(data);
-            }
-            return data;
+            renderHabits();
+            updateStats();
+            renderHistoryGrid();
+            initCharts();
         }
         
-        // Render habits list
-        function renderHabits() {
-            const data = initToday();
-            const today = getTodayKey();
-            const todayData = data.history[today] || { completed: [], total: 0 };
-            const container = document.getElementById('habitsList');
+        // Add new habit
+        function addHabit() {
+            const input = document.getElementById('habitInput');
+            const name = input.value.trim();
             
-            if (data.habits.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <span>ð±</span>
-                        <p>No habits yet. Add your first habit above!</p>
-                    </div>
-                `;
-                return;
+            if (name && !habits.find(h => h.name.toLowerCase() === name.toLowerCase())) {
+                habits.push({
+                    id: Date.now(),
+                    name: name,
+                    createdAt: getToday(),
+                    streak: 0,
+                    bestStreak: 0
+                });
+                saveData();
+                renderHabits();
+                updateStats();
+                input.value = '';
             }
-            
-            container.innerHTML = data.habits.map((habit, index) => {
-                const isCompleted = todayData.completed.includes(habit.id);
-                const streak = calculateStreak(habit.id);
-                return `
-                    <div class="habit-item">
-                        <div class="habit-info">
-                            <div class="habit-checkbox ${isCompleted ? 'checked' : ''}" 
-                                 onclick="toggleHabit('${habit.id}')"></div>
-                            <span class="habit-name">${habit.name}</span>
-                        </div>
-                        <div class="habit-actions">
-                            <span class="habit-streak">ð¥ ${streak}</span>
-                            <button class="btn btn-delete" onclick="deleteHabit('${habit.id}')">Delete</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
         
-        // Calculate streak for a habit
-        function calculateStreak(habitId) {
-            const data = getData();
+        // Delete habit
+        function deleteHabit(id) {
+            if (confirm('Are you sure you want to delete this habit?')) {
+                habits = habits.filter(h => h.id !== id);
+                saveData();
+                renderHabits();
+                updateStats();
+            }
+        }
+        
+        // Toggle habit completion
+        function toggleHabit(id) {
+            const today = getToday();
+            if (!history[today]) {
+                history[today] = {};
+            }
+            
+            history[today][id] = !history[today][id];
+            
+            // Update streak
+            const habit = habits.find(h => h.id === id);
+            if (habit) {
+                updateStreak(habit);
+            }
+            
+            saveData();
+            renderHabits();
+            updateStats();
+            renderHistoryGrid();
+            updateCharts();
+        }
+        
+        // Update streak for a habit
+        function updateStreak(habit) {
             let streak = 0;
-            const today = new Date();
+            let date = new Date();
             
-            for (let i = 0; i < 365; i++) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                const dateKey = date.toISOString().split('T')[0];
-                
-                if (data.history[dateKey] && data.history[dateKey].completed.includes(habitId)) {
+            while (true) {
+                const dateStr = formatDate(date);
+                if (history[dateStr] && history[dateStr][habit.id]) {
                     streak++;
-                } else if (i > 0) {
+                    date.setDate(date.getDate() - 1);
+                } else {
                     break;
                 }
             }
             
-            return streak;
-        }
-        
-        // Add new habit
-        function addHabit(name) {
-            const data = getData();
-            const habit = {
-                id: Date.now().toString(),
-                name: name,
-                createdAt: getTodayKey()
-            };
-            data.habits.push(habit);
-            
-            // Update all future totals
-            const today = getTodayKey();
-            if (data.history[today]) {
-                data.history[today].total = data.habits.length;
+            habit.streak = streak;
+            if (streak > habit.bestStreak) {
+                habit.bestStreak = streak;
             }
-            
-            saveData(data);
-            renderAll();
         }
         
-        // Delete habit
-        function deleteHabit(habitId) {
-            const data = getData();
-            data.habits = data.habits.filter(h => h.id !== habitId);
+        // Render habits list
+        function renderHabits() {
+            const list = document.getElementById('habitsList');
+            const today = getToday();
             
-            // Remove from all history
-            Object.keys(data.history).forEach(date => {
-                data.history[date].completed = data.history[date].completed.filter(id => id !== habitId);
-            });
-            
-            saveData(data);
-            renderAll();
-        }
-        
-        // Toggle habit completion
-        function toggleHabit(habitId) {
-            const data = initToday();
-            const today = getTodayKey();
-            
-            if (!data.history[today]) {
-                data.history[today] = { completed: [], total: data.habits.length };
-            }
-            
-            const index = data.history[today].completed.indexOf(habitId);
-            if (index === -1) {
-                data.history[today].completed.push(habitId);
-            } else {
-                data.history[today].completed.splice(index, 1);
-            }
-            
-            data.history[today].total = data.habits.length;
-            saveData(data);
-            renderAll();
-        }
-        
-        // Update stats
-        function updateStats() {
-            const data = getData();
-            const today = getTodayKey();
-            const todayData = data.history[today] || { completed: [], total: 0 };
-            
-            document.getElementById('totalHabits').textContent = data.habits.length;
-            document.getElementById('completedToday').textContent = todayData.completed.length;
-            
-            // Calculate best streak across all habits
-            let bestStreak = 0;
-            data.habits.forEach(habit => {
-                const streak = calculateStreak(habit.id);
-                if (streak > bestStreak) bestStreak = streak;
-            });
-            document.getElementById('longestStreak').textContent = bestStreak;
-        }
-        
-        // Render streaks list
-        function renderStreaks() {
-            const data = getData();
-            const container = document.getElementById('streaksList');
-            
-            if (data.habits.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <span>â­</span>
-                        <p>Complete habits to build streaks!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const streaks = data.habits.map(habit => ({
-                name: habit.name,
-                streak: calculateStreak(habit.id)
-            })).sort((a, b) => b.streak - a.streak);
-            
-            container.innerHTML = streaks.map(item => `
-                <div class="habit-item">
-                    <span class="habit-name">${item.name}</span>
-                    <span class="habit-streak">ð¥ ${item.streak} days</span>
-                </div>
-            `).join('');
-        }
-        
-        // Render history
-        function renderHistory() {
-            const data = getData();
-            const container = document.getElementById('historyList');
-            const dates = Object.keys(data.history).sort().reverse().slice(0, 30);
-            
-            if (dates.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <span>ð</span>
-                        <p>Your habit history will appear here.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = dates.map(date => {
-                const dayData = data.history[date];
-                const completed = dayData.completed.length;
-                const total = dayData.total || data.habits.length;
-                const displayDate = new Date(date).toLocaleDateString('en-US', { 
-                    weekday: 'short', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
+            list.innerHTML = habits.map(habit => {
+                const isCompleted = history[today] && history[today][habit.id];
                 return `
-                    <div class="history-item">
-                        <span class="history-date">${displayDate}</span>
-                        <span class="history-count">${completed}/${total} completed</span>
+                    <li class="habit-item ${isCompleted ? 'completed' : ''}">
+                        <input type="checkbox" class="habit-checkbox" 
+                            ${isCompleted ? 'checked' : ''} 
+                            onchange="toggleHabit(${habit.id})">
+                        <span class="habit-name">${escapeHtml(habit.name)}</span>
+                        <span class="habit-streak">${habit.streak} day streak</span>
+                        <button class="btn btn-danger" onclick="deleteHabit(${habit.id})">Delete</button>
+                    </li>
+                `;
+            }).join('');
+        }
+        
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const today = getToday();
+            const todayData = history[today] || {};
+            
+            // Today's progress
+            const completedToday = habits.filter(h => todayData[h.id]).length;
+            const progress = habits.length > 0 ? Math.round((completedToday / habits.length) * 100) : 0;
+            document.getElementById('todayProgress').textContent = progress + '%';
+            
+            // Total habits
+            document.getElementById('totalHabits').textContent = habits.length;
+            
+            // Current streak (days with all habits completed)
+            let currentStreak = 0;
+            let date = new Date();
+            
+            while (true) {
+                const dateStr = formatDate(date);
+                const dayData = history[dateStr];
+                
+                if (dayData && habits.length > 0) {
+                    const allCompleted = habits.every(h => dayData[h.id]);
+                    if (allCompleted) {
+                        currentStreak++;
+                        date.setDate(date.getDate() - 1);
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('currentStreak').textContent = currentStreak + ' days';
+            
+            // Best streak
+            const bestStreak = Math.max(...habits.map(h => h.bestStreak), 0);
+            document.getElementById('bestStreak').textContent = bestStreak + ' days';
+        }
+        
+        // Render history grid (heatmap)
+        function renderHistoryGrid() {
+            const grid = document.getElementById('historyGrid');
+            const days = [];
+            const today = new Date();
+            
+            // Get last 84 days (12 weeks)
+            for (let i = 83; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                days.push(date);
+            }
+            
+            grid.innerHTML = days.map(date => {
+                const dateStr = formatDate(date);
+                const dayData = history[dateStr] || {};
+                const completed = Object.values(dayData).filter(v => v).length;
+                const total = habits.length;
+                
+                let level = 0;
+                if (total > 0) {
+                    const ratio = completed / total;
+                    if (ratio > 0) level = 1;
+                    if (ratio >= 0.25) level = 2;
+                    if (ratio >= 0.5) level = 3;
+                    if (ratio >= 0.75) level = 4;
+                }
+                
+                return `
+                    <div class="history-day level-${level}" 
+                        onclick="showDayDetail('${dateStr}')"
+                        title="${formatDisplayDate(date)}: ${completed}/${total} habits">
+                        ${date.getDate()}
                     </div>
                 `;
             }).join('');
         }
         
-        // Render calendar
-        function renderCalendar() {
-            const data = getData();
-            const container = document.getElementById('calendarGrid');
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        // Show day detail modal
+        function showDayDetail(dateStr) {
+            const modal = document.getElementById('dayModal');
+            const modalDate = document.getElementById('modalDate');
+            const modalContent = document.getElementById('modalContent');
             
-            let html = '';
+            const date = new Date(dateStr + 'T00:00:00');
+            modalDate.textContent = formatDisplayDate(date);
             
-            // Empty cells for days before first of month
-            for (let i = 0; i < firstDay.getDay(); i++) {
-                html += '<div class="calendar-day"></div>';
+            const dayData = history[dateStr] || {};
+            
+            if (habits.length === 0) {
+                modalContent.innerHTML = '<p>No habits tracked yet.</p>';
+            } else {
+                modalContent.innerHTML = habits.map(habit => {
+                    const done = dayData[habit.id];
+                    return `
+                        <div class="history-detail-item">
+                            <div class="status ${done ? 'done' : 'missed'}"></div>
+                            <span>${escapeHtml(habit.name)}</span>
+                        </div>
+                    `;
+                }).join('');
             }
             
-            // Days of the month
-            for (let day = 1; day <= lastDay.getDate(); day++) {
-                const date = new Date(today.getFullYear(), today.getMonth(), day);
-                const dateKey = date.toISOString().split('T')[0];
-                const dayData = data.history[dateKey];
-                
-                let className = 'calendar-day empty';
-                if (dayData && data.habits.length > 0) {
-                    const rate = dayData.completed.length / data.habits.length;
-                    if (rate >= 1) {
-                        className = 'calendar-day completed';
-                    } else if (rate > 0) {
-                        className = 'calendar-day partial';
-                    }
-                }
-                
-                html += `<div class="${className}">${day}</div>`;
-            }
-            
-            container.innerHTML = html;
+            modal.classList.add('active');
         }
         
-        // Charts
-        let weeklyChart, completionChart;
+        // Close modal
+        function closeModal() {
+            document.getElementById('dayModal').classList.remove('active');
+        }
         
-        function renderCharts() {
-            const data = getData();
-            const weekDates = getWeekDates();
+        // Close modal on outside click
+        document.getElementById('dayModal').addEventListener('click', (e) => {
+            if (e.target.id === 'dayModal') closeModal();
+        });
+        
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            // Weekly completion data
-            const weeklyData = weekDates.map(date => {
-                const dayData = data.history[date];
-                return dayData ? dayData.completed.length : 0;
-            });
-            
-            const labels = weekDates.map(date => {
-                return new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
-            });
-            
-            // Weekly Chart
-            const ctx1 = document.getElementById('weeklyChart').getContext('2d');
-            if (weeklyChart) weeklyChart.destroy();
-            weeklyChart = new Chart(ctx1, {
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Weekly chart
+            const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+            weeklyChart = new Chart(weeklyCtx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: [],
                     datasets: [{
                         label: 'Habits Completed',
-                        data: weeklyData,
+                        data: [],
                         backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                        borderRadius: 8
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
                     scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    }
-                }
-            });
-            
-            // Completion rate chart
-            const ctx2 = document.getElementById('completionChart').getContext('2d');
-            if (completionChart) completionChart.destroy();
-            
-            const completionData = weekDates.map(date => {
-                const dayData = data.history[date];
-                if (!dayData || data.habits.length === 0) return 0;
-                return Math.round((dayData.completed.length / data.habits.length) * 100);
-            });
-            
-            completionChart = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Completion %',
-                        data: completionData,
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#667eea',
-                        pointRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
                     },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            max: 100,
-                            ticks: { callback: value => value + '%' }
+                    plugins: {
+                        legend: {
+                            display: false
                         }
                     }
                 }
             });
+            
+            // Monthly chart
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            monthlyChart = new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Completion Rate',
+                        data: [],
+                        fill: true,
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: value => value + '%'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            updateCharts();
         }
         
-        // Render everything
-        function renderAll() {
-            renderHabits();
-            updateStats();
-            renderStreaks();
-            renderHistory();
-            renderCalendar();
-            renderCharts();
-        }
-        
-        // Event listeners
-        document.getElementById('habitForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('habitInput');
-            const name = input.value.trim();
-            if (name) {
-                addHabit(name);
-                input.value = '';
+        // Update charts with data
+        function updateCharts() {
+            // Weekly data (last 7 days)
+            const weeklyLabels = [];
+            const weeklyData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = formatDate(date);
+                
+                weeklyLabels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                const dayData = history[dateStr] || {};
+                const completed = Object.values(dayData).filter(v => v).length;
+                weeklyData.push(completed);
             }
-        });
+            
+            weeklyChart.data.labels = weeklyLabels;
+            weeklyChart.data.datasets[0].data = weeklyData;
+            weeklyChart.update();
+            
+            // Monthly data (last 30 days)
+            const monthlyLabels = [];
+            const monthlyData = [];
+            
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = formatDate(date);
+                
+                monthlyLabels.push(date.getDate());
+                
+                const dayData = history[dateStr] || {};
+                const completed = Object.values(dayData).filter(v => v).length;
+                const total = habits.length;
+                const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+                monthlyData.push(rate);
+            }
+            
+            monthlyChart.data.labels = monthlyLabels;
+            monthlyChart.data.datasets[0].data = monthlyData;
+            monthlyChart.update();
+        }
         
-        // Initialize on page load
-        renderAll();
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('habits', JSON.stringify(habits));
+            localStorage.setItem('habitHistory', JSON.stringify(history));
+        }
+        
+        // Initialize on load
+        init();
     </script>
 </body>
 </html>
