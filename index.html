@@ -6,85 +6,90 @@
     <title>Habit Tracker Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .habit-card { transition: transform 0.2s; }
+        .habit-card:hover { transform: translateY(-2px); }
+    </style>
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto">
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold">Habit Tracker</h1>
-            <button onclick="openModal()" class="bg-blue-600 text-white px-4 py-2 rounded">Add Habit</button>
-        </header>
-        <div id="habitsGrid" class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8"></div>
-        <div class="bg-white p-6 rounded shadow mb-8">
-            <h2 class="text-xl font-bold mb-4">Streaks</h2>
-            <canvas id="progressChart" height="100"></canvas>
-        </div>
-        <div class="bg-white p-6 rounded shadow">
-            <h2 class="text-xl font-bold mb-4">History</h2>
-            <div id="historyList" class="space-y-1 text-sm text-gray-600"></div>
-        </div>
-    </div>
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-        <div class="bg-white p-8 rounded w-80">
-            <input id="habitName" type="text" placeholder="Habit Name" class="w-full border p-2 mb-4">
-            <div class="flex justify-end gap-2">
-                <button onclick="closeModal()">Cancel</button>
-                <button onclick="addHabit()" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+    <div class="max-w-4xl mx-auto p-6">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-3xl font-bold text-indigo-600">Habit Tracker</h1>
+                <p class="text-slate-500">Track your progress, build your life.</p>
             </div>
+            <div class="bg-white px-4 py-2 rounded-lg shadow-sm font-bold text-orange-500">
+                Streak: <span id="globalStreak">0</span>
+            </div>
+        </header>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-semibold mb-4">Daily Checklist</h2>
+                <div id="habitList" class="space-y-3"></div>
+                <div class="mt-6 flex gap-2">
+                    <input type="text" id="newHabitName" placeholder="New habit..." class="flex-1 px-4 py-2 bg-slate-100 rounded-lg">
+                    <button onclick="addHabit()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg">Add</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <canvas id="progressChart"></canvas>
+            </div>
+        </div>
+        <div id="history" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <h2 class="text-lg font-semibold mb-4">History</h2>
+            <div id="historyBody" class="space-y-2"></div>
         </div>
     </div>
     <script>
         let habits = JSON.parse(localStorage.getItem('habits')) || [];
-        let history = JSON.parse(localStorage.getItem('habitHistory')) || [];
-        function save() { 
+        let history = JSON.parse(localStorage.getItem('habitHistory')) || {};
+        let chart = null;
+
+        function save() {
             localStorage.setItem('habits', JSON.stringify(habits));
             localStorage.setItem('habitHistory', JSON.stringify(history));
             render();
+        }
+
+        function addHabit() {
+            const name = document.getElementById('newHabitName').value.trim();
+            if(name) { habits.push(name); document.getElementById('newHabitName').value = ''; save(); }
+        }
+
+        function toggleHabit(name) {
+            const today = new Date().toISOString().split('T')[0];
+            if(!history[today]) history[today] = [];
+            const idx = history[today].indexOf(name);
+            if(idx > -1) history[today].splice(idx, 1);
+            else history[today].push(name);
+            save();
+        }
+
+        function render() {
+            const today = new Date().toISOString().split('T')[0];
+            const list = document.getElementById('habitList');
+            list.innerHTML = habits.map(h => `
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                    <input type="checkbox" ${(history[today]||[]).includes(h) ? 'checked' : ''} onchange="toggleHabit('${h}')">
+                    <span>${h}</span>
+                </div>
+            `).join('');
             updateChart();
         }
-        function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
-        function addHabit() {
-            const name = document.getElementById('habitName').value;
-            if (name) { 
-                habits.push({ id: Date.now(), name, streak: 0, lastCheck: null });
-                closeModal();
-                save();
-            }
-        }
-        function toggleHabit(id) {
-            const h = habits.find(x => x.id === id);
-            const today = new Date().toDateString();
-            if (h.lastCheck !== today) {
-                h.streak++; h.lastCheck = today;
-                history.push({ name: h.name, date: today });
-                save();
-            }
-        }
-        function render() {
-            const grid = document.getElementById('habitsGrid');
-            grid.innerHTML = habits.map(h => {
-                const isDone = h.lastCheck === new Date().toDateString();
-                return '<div class="bg-white p-6 rounded shadow">' +
-                    '<h3 class="font-bold">' + h.name + '</h3>' +
-                    '<p class="mb-4">Streak: ' + h.streak + ' days</p>' +
-                    '<button onclick="toggleHabit(' + h.id + ')" class="w-full py-2 rounded ' + (isDone ? 'bg-green-100' : 'bg-blue-100') + '">' + (isDone ? 'Done' : 'Complete') + '</button>' +
-                    '</div>';
-            }).join('');
-            document.getElementById('historyList').innerHTML = history.slice(-10).reverse().map(i => '<div>' + i.name + ' - ' + i.date + '</div>').join('');
-        }
-        let chart;
+
         function updateChart() {
             const ctx = document.getElementById('progressChart').getContext('2d');
-            if (chart) chart.destroy();
+            const labels = [...Array(7)].map((_,i) => {
+                const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0];
+            }).reverse();
+            const data = labels.map(l => (history[l]||[]).length);
+            if(chart) chart.destroy();
             chart = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: habits.map(h => h.name),
-                    datasets: [{ label: 'Streaks', data: habits.map(h => h.streak), backgroundColor: '#3b82f6' }]
-                }
+                data: { labels, datasets: [{ label: 'Completed', data, backgroundColor: '#6366f1' }] }
             });
         }
-        render(); updateChart();
+        render();
     </script>
 </body>
 </html>
