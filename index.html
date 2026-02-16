@@ -12,6 +12,7 @@
         .habit-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
         .habit-item:last-child { border-bottom: none; }
         .streak-badge { background-color: #ffc107; color: #000; font-weight: bold; }
+        .history-list { max-height: 300px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -23,36 +24,36 @@
                 <div class="card p-4">
                     <h3>Add New Habit</h3>
                     <div class="input-group mb-3">
-                        <input type="text" id="habitInput" class="form-control" placeholder="Drink Water">
+                        <input type="text" id="habitInput" class="form-control" placeholder="E.g., Meditation">
                         <button class="btn btn-primary" onclick="addHabit()">Add</button>
                     </div>
-                </div>
-                
-                <div class="card p-4">
-                    <h3>Daily Check-in</h3>
-                    <div id="habitList"></div>
+                    <hr>
+                    <h3>Today's Habits</h3>
+                    <div id="habitsList"></div>
                 </div>
             </div>
             
             <div class="col-md-8">
-                <div class="card p-4">
-                    <h3>Activity Overview</h3>
-                    <canvas id="habitChart"></canvas>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card p-4">
+                            <h3>Consistency Overview</h3>
+                            <canvas id="habitChart" height="100"></canvas>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="card p-4">
-                    <h3>History</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Habit</th>
-                                    <th>Current Streak</th>
-                                    <th>Total Completions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyBody"></tbody>
-                        </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card p-4">
+                            <h3>Longest Streaks</h3>
+                            <div id="streaksList"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card p-4">
+                            <h3>History (Last 7 Days)</h3>
+                            <div id="historyList" class="history-list"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,48 +62,54 @@
 
     <script>
         let habits = JSON.parse(localStorage.getItem('habits')) || [];
+        let history = JSON.parse(localStorage.getItem('habitHistory')) || {};
 
-        function saveHabits() {
+        function save() {
             localStorage.setItem('habits', JSON.stringify(habits));
+            localStorage.setItem('habitHistory', JSON.stringify(history));
             render();
+            updateChart();
         }
 
         function addHabit() {
-            const name = document.getElementById('habitInput').value;
-            if (!name) return;
-            habits.push({
-                name,
-                completions: [],
-                streak: 0
-            });
-            document.getElementById('habitInput').value = '';
-            saveHabits();
+            const name = document.getElementById('habitInput').value.trim();
+            if (name) {
+                habits.push({ name: name, createdAt: new Date().toISOString(), streak: 0 });
+                document.getElementById('habitInput').value = '';
+                save();
+            }
         }
 
         function toggleHabit(index) {
             const today = new Date().toISOString().split('T')[0];
-            const habit = habits[index];
-            const dateIndex = habit.completions.indexOf(today);
+            const habitName = habits[index].name;
             
-            if (dateIndex > -1) {
-                habit.completions.splice(dateIndex, 1);
+            if (!history[today]) history[today] = [];
+            
+            const habitIndex = history[today].indexOf(habitName);
+            if (habitIndex > -1) {
+                history[today].splice(habitIndex, 1);
             } else {
-                habit.completions.push(today);
+                history[today].push(habitName);
             }
+            
             calculateStreaks();
-            saveHabits();
+            save();
         }
 
         function calculateStreaks() {
-            const today = new Date();
             habits.forEach(habit => {
                 let streak = 0;
-                let current = new Date();
-                const completionSet = new Set(habit.completions);
+                let checkDate = new Date();
                 
-                while (completionSet.has(current.toISOString().split('T')[0])) {
-                    streak++;
-                    current.setDate(current.getDate() - 1);
+                while (true) {
+                    const dateStr = checkDate.toISOString().split('T')[0];
+                    if (history[dateStr] && history[dateStr].includes(habit.name)) {
+                        streak++;
+                        checkDate.setDate(checkDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
                 }
                 habit.streak = streak;
             });
@@ -110,59 +117,66 @@
 
         function render() {
             const today = new Date().toISOString().split('T')[0];
-            const habitList = document.getElementById('habitList');
-            const historyBody = document.getElementById('historyBody');
-            
-            habitList.innerHTML = '';
-            historyBody.innerHTML = '';
-            
-            habits.forEach((habit, index) => {
-                const checked = habit.completions.includes(today) ? 'checked' : '';
-                habitList.innerHTML += `
-                    <div class="habit-item">
-                        <span>${habit.name}</span>
-                        <input type="checkbox" onclick="toggleHabit(${index})" ${checked}>
-                    </div>
-                `;
-                
-                historyBody.innerHTML += `
-                    <tr>
-                        <td>${habit.name}</td>
-                        <td><span class="badge streak-badge">${habit.streak} days</span></td>
-                        <td>${habit.completions.length}</td>
-                    </tr>
-                `;
-            });
-            updateChart();
+            const list = document.getElementById('habitsList');
+            list.innerHTML = habits.map((h, i) => {
+                return '<div class="habit-item">' +
+                    '<span>' + h.name + '</span>' +
+                    '<input type="checkbox" class="form-check-input" ' + ((history[today] || []).includes(h.name) ? 'checked' : '') + ' onchange="toggleHabit(' + i + ')">' +
+                '</div>';
+            }).join('');
+
+            const streakList = document.getElementById('streaksList');
+            streakList.innerHTML = habits.sort((a,b) => b.streak - a.streak).map(h => {
+                return '<div class="d-flex justify-content-between mb-2">' +
+                    '<span>' + h.name + '</span>' +
+                    '<span class="badge streak-badge">' + h.streak + ' days</span>' +
+                '</div>';
+            }).join('');
+
+            const histList = document.getElementById('historyList');
+            const dates = Object.keys(history).sort().reverse().slice(0, 7);
+            histList.innerHTML = dates.map(date => {
+                return '<div class="mb-2">' +
+                    '<strong>' + date + ':</strong> ' + history[date].join(', ') +
+                '</div>';
+            }).join('');
         }
 
         let chart;
         function updateChart() {
-            const canvas = document.getElementById('habitChart');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const labels = habits.map(h => h.name);
-            const data = habits.map(h => h.completions.length);
+            const ctx = document.getElementById('habitChart').getContext('2d');
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                last7Days.push(d.toISOString().split('T')[0]);
+            }
+
+            const data = last7Days.map(date => (history[date] || []).length);
 
             if (chart) chart.destroy();
             chart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: labels,
+                    labels: last7Days,
                     datasets: [{
-                        label: 'Total Completions',
+                        label: 'Habits Completed',
                         data: data,
-                        backgroundColor: '#0d6efd'
+                        borderColor: '#0d6efd',
+                        tension: 0.1,
+                        fill: true,
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)'
                     }]
                 },
                 options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true } }
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                 }
             });
         }
 
+        calculateStreaks();
         render();
+        updateChart();
     </script>
 </body>
 </html>
