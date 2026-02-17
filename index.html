@@ -3,180 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habit Tracker Dashboard</title>
+    <title>Habit Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .habit-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .habit-item:last-child { border-bottom: none; }
-        .streak-badge { background-color: #ffc107; color: #000; font-weight: bold; }
-        .history-list { max-height: 300px; overflow-y: auto; }
-    </style>
 </head>
-<body>
-    <div class="container py-5">
-        <h1 class="text-center mb-5">Habit Tracker</h1>
-        
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card p-4">
-                    <h3>Add New Habit</h3>
-                    <div class="input-group mb-3">
-                        <input type="text" id="habitInput" class="form-control" placeholder="E.g., Meditation">
-                        <button class="btn btn-primary" onclick="addHabit()">Add</button>
-                    </div>
-                    <hr>
-                    <h3>Today's Habits</h3>
-                    <div id="habitsList"></div>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h1 class="text-3xl font-bold text-gray-800">Habit Tracker</h1>
+            <p class="text-gray-500">Track your progress and build consistency.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Current Streak</h2>
+                <div class="flex items-center space-x-2">
+                    <span id="streakCount" class="text-4xl font-bold text-blue-600">0</span>
+                    <span class="text-gray-500">days</span>
                 </div>
             </div>
-            
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card p-4">
-                            <h3>Consistency Overview</h3>
-                            <canvas id="habitChart" height="100"></canvas>
-                        </div>
+            <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Daily Check-in</h2>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Did you complete your habit today?</p>
+                        <p id="todayDate" class="text-sm text-gray-400"></p>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card p-4">
-                            <h3>Longest Streaks</h3>
-                            <div id="streaksList"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card p-4">
-                            <h3>History (Last 7 Days)</h3>
-                            <div id="historyList" class="history-list"></div>
-                        </div>
-                    </div>
+                    <button id="checkInBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                        I Did It!
+                    </button>
                 </div>
             </div>
         </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Last 7 Days</h2>
+            <canvas id="habitChart" height="100"></canvas>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">History</h2>
+            <div id="historyList" class="space-y-2"></div>
+        </div>
     </div>
-
     <script>
-        let habits = JSON.parse(localStorage.getItem('habits')) || [];
-        let history = JSON.parse(localStorage.getItem('habitHistory')) || {};
-
+        const STORAGE_KEY = "habit_tracker_data";
+        let habitData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         function save() {
-            localStorage.setItem('habits', JSON.stringify(habits));
-            localStorage.setItem('habitHistory', JSON.stringify(history));
-            render();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(habitData));
+            updateUI();
+        }
+        function getTodayStr() { return new Date().toISOString().split("T")[0]; }
+        function calculateStreak() {
+            if (habitData.length === 0) return 0;
+            const sorted = [...habitData].sort((a, b) => b.localeCompare(a));
+            const lastEntry = sorted[0];
+            const today = getTodayStr();
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+            if (lastEntry !== today && lastEntry !== yesterday) return 0;
+            let streak = 0;
+            let checkDate = lastEntry;
+            for (let i = 0; i < sorted.length; i++) {
+                if (sorted[i] === checkDate) {
+                    streak++;
+                    const d = new Date(checkDate);
+                    d.setDate(d.getDate() - 1);
+                    checkDate = d.toISOString().split("T")[0];
+                } else { break; }
+            }
+            return streak;
+        }
+        function updateUI() {
+            const today = getTodayStr();
+            const checkedToday = habitData.includes(today);
+            document.getElementById("todayDate").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+            const btn = document.getElementById("checkInBtn");
+            if (checkedToday) {
+                btn.textContent = "Completed!";
+                btn.disabled = true;
+                btn.classList.replace("bg-blue-600", "bg-green-500");
+            } else {
+                btn.textContent = "I Did It!";
+                btn.disabled = false;
+                btn.classList.add("bg-blue-600");
+                btn.classList.remove("bg-green-500");
+            }
+            document.getElementById("streakCount").textContent = calculateStreak();
+            const list = document.getElementById("historyList");
+            list.innerHTML = habitData.slice().reverse().map(date => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-700 font-medium">${new Date(date).toLocaleDateString()}</span>
+                    <span class="text-green-600 text-sm font-bold uppercase">Success</span>
+                </div>
+            `).join("") || '<p class="text-gray-400 italic">No check-ins yet.</p>';
             updateChart();
         }
-
-        function addHabit() {
-            const name = document.getElementById('habitInput').value.trim();
-            if (name) {
-                habits.push({ name: name, createdAt: new Date().toISOString(), streak: 0 });
-                document.getElementById('habitInput').value = '';
-                save();
-            }
-        }
-
-        function toggleHabit(index) {
-            const today = new Date().toISOString().split('T')[0];
-            const habitName = habits[index].name;
-            
-            if (!history[today]) history[today] = [];
-            
-            const habitIndex = history[today].indexOf(habitName);
-            if (habitIndex > -1) {
-                history[today].splice(habitIndex, 1);
-            } else {
-                history[today].push(habitName);
-            }
-            
-            calculateStreaks();
-            save();
-        }
-
-        function calculateStreaks() {
-            habits.forEach(habit => {
-                let streak = 0;
-                let checkDate = new Date();
-                
-                while (true) {
-                    const dateStr = checkDate.toISOString().split('T')[0];
-                    if (history[dateStr] && history[dateStr].includes(habit.name)) {
-                        streak++;
-                        checkDate.setDate(checkDate.getDate() - 1);
-                    } else {
-                        break;
-                    }
-                }
-                habit.streak = streak;
-            });
-        }
-
-        function render() {
-            const today = new Date().toISOString().split('T')[0];
-            const list = document.getElementById('habitsList');
-            list.innerHTML = habits.map((h, i) => {
-                return '<div class="habit-item">' +
-                    '<span>' + h.name + '</span>' +
-                    '<input type="checkbox" class="form-check-input" ' + ((history[today] || []).includes(h.name) ? 'checked' : '') + ' onchange="toggleHabit(' + i + ')">' +
-                '</div>';
-            }).join('');
-
-            const streakList = document.getElementById('streaksList');
-            streakList.innerHTML = habits.sort((a,b) => b.streak - a.streak).map(h => {
-                return '<div class="d-flex justify-content-between mb-2">' +
-                    '<span>' + h.name + '</span>' +
-                    '<span class="badge streak-badge">' + h.streak + ' days</span>' +
-                '</div>';
-            }).join('');
-
-            const histList = document.getElementById('historyList');
-            const dates = Object.keys(history).sort().reverse().slice(0, 7);
-            histList.innerHTML = dates.map(date => {
-                return '<div class="mb-2">' +
-                    '<strong>' + date + ':</strong> ' + history[date].join(', ') +
-                '</div>';
-            }).join('');
-        }
-
         let chart;
         function updateChart() {
-            const ctx = document.getElementById('habitChart').getContext('2d');
+            const ctx = document.getElementById("habitChart").getContext("2d");
             const last7Days = [];
+            const labels = [];
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
-                last7Days.push(d.toISOString().split('T')[0]);
+                const str = d.toISOString().split("T")[0];
+                last7Days.push(habitData.includes(str) ? 1 : 0);
+                labels.push(d.toLocaleDateString(undefined, { weekday: "short" }));
             }
-
-            const data = last7Days.map(date => (history[date] || []).length);
-
             if (chart) chart.destroy();
             chart = new Chart(ctx, {
-                type: 'line',
+                type: "bar",
                 data: {
-                    labels: last7Days,
+                    labels: labels,
                     datasets: [{
-                        label: 'Habits Completed',
-                        data: data,
-                        borderColor: '#0d6efd',
-                        tension: 0.1,
-                        fill: true,
-                        backgroundColor: 'rgba(13, 110, 253, 0.1)'
+                        label: "Check-ins",
+                        data: last7Days,
+                        backgroundColor: "#2563eb",
+                        borderRadius: 4
                     }]
                 },
                 options: {
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 1, ticks: { display: false }, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
         }
-
-        calculateStreaks();
-        render();
-        updateChart();
+        document.getElementById("checkInBtn").addEventListener("click", () => {
+            const today = getTodayStr();
+            if (!habitData.includes(today)) {
+                habitData.push(today);
+                save();
+            }
+        });
+        updateUI();
     </script>
 </body>
 </html>
